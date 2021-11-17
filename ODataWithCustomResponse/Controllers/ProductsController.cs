@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OData.Query;
 using Microsoft.EntityFrameworkCore;
 using ODataWithCustomResponse.Data;
 using ODataWithCustomResponse.Entities;
@@ -103,6 +104,14 @@ namespace ODataWithCustomResponse.Controllers
         private bool ProductsExists(Guid id)
         {
             return _context.Products.Any(e => e.Id == id);
+        }
+
+        [HttpGet]
+        [Route("search")]
+        [EnableQuery]
+        public IActionResult SearchProducts()
+        {
+            return Ok(this._context.Products);
         }
     }
 }

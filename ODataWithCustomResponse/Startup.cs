@@ -13,6 +13,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using ODataWithCustomResponse.Data;
+using Microsoft.AspNetCore.OData;
+using ODataWithCustomResponse.OData;
 
 namespace ODataWithCustomResponse
 {
@@ -29,7 +31,13 @@ namespace ODataWithCustomResponse
         public void ConfigureServices(IServiceCollection services)
         {
 
-            services.AddControllers();
+            services.AddControllers().AddOData(c => 
+            {
+                c.AddRouteComponents("odata", new ODataEntityDataModel().GetEntityDataModel());
+                c.Select();
+                c.Expand();
+                c.Filter();
+            });
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "ODataWithCustomResponse", Version = "v1" });
