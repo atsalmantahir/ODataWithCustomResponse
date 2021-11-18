@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.OData.Query;
 using Microsoft.EntityFrameworkCore;
 using ODataWithCustomResponse.Data;
 using ODataWithCustomResponse.Entities;
+using ODataWithCustomResponse.OData;
 
 namespace ODataWithCustomResponse.Controllers
 {
@@ -109,9 +110,19 @@ namespace ODataWithCustomResponse.Controllers
         [HttpGet]
         [Route("search")]
         [EnableQuery]
-        public IActionResult SearchProducts()
+        public ObjectResult SearchProducts(ODataQueryOptions<Entities.Products> options)
         {
-            return Ok(this._context.Products);
+            var data = options.ApplyTo(this._context.Products);
+            var results = data.Cast<Entities.Products>().ToList();
+            var response = new ODataWrapper<Entities.Products>
+            {
+                Results = results,
+                OrderBy = string.Empty,
+                ResultCount = results.Count(),
+                Top = 0,
+                Skip = 0
+            };
+            return new ObjectResult(response);
         }
     }
 }
